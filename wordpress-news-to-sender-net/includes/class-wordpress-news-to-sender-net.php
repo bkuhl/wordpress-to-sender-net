@@ -114,7 +114,8 @@ class Plugin_Name {
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wordpress-news-to-sender-net-i18n.php';
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wordpress-news-to-sender-net-i18n.php';
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wordpress-news-to-sender-net-sender-api-lib.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
@@ -164,6 +165,8 @@ class Plugin_Name {
 
         $this->loader->add_action('admin_menu', $plugin_admin, 'addSettingsMenuNavigation');
         $this->loader->add_action('admin_init', $plugin_admin, 'initializeAdmin');
+
+        $this->loader->add_action('publish_post', $plugin_admin, 'createCampaign');
 
 	}
 

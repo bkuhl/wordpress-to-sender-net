@@ -20,11 +20,11 @@ class Plugin_Name_Sender_Net_Lib {
     function getGroups(string $apiToken): array
     {
         $response = wp_remote_get('https://api.sender.net/v2/groups', array(
-            'headers' => array(
+            'headers' => [
                 'Authorization' => 'Bearer ' . $apiToken,
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-            ),
+            ],
         ));
 
         if ($response['response']['code'] === 401) {
@@ -48,6 +48,68 @@ class Plugin_Name_Sender_Net_Lib {
             ];
         }
         return $groups;
+    }
+
+    function createCampaign(
+        string $subject,
+        string $content
+    ): string
+    {
+        $response = wp_safe_remote_post('https://api.sender.net/v2/campaigns', array(
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::apiToken(),
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ],
+            'body' => json_encode([
+                'title' => $subject,
+                'subject' => $subject,
+                'from' => get_option(Plugin_Name::OPTION_REPLY_TO),
+                'reply_to' => get_option(Plugin_Name::OPTION_REPLY_TO),
+                'content_type' => 'html',
+                'groups' => get_option(Plugin_Name::OPTION_SELECTED_GROUPS, []),
+                'content' => $content,
+            ]),
+        ));
+
+        if ($response['response']['code'] === 401) {
+            throw new RuntimeException('Unable to authenticate with Sender.net using that API token, please try again.');
+        }
+
+        if ($response['response']['code'] === 422) {
+            throw new RuntimeException('Failed to create: '.$response['response']['message']);
+        }
+
+        if (is_wp_error($response)) {
+            return '';
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+        return $data['data']['id'];
+    }
+
+    function sendCampaign(
+        string $id
+    ): bool
+    {
+        $response = wp_safe_remote_post('https://api.sender.net/v2/campaigns/'.$id.'/send', array(
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::apiToken(),
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ],
+        ));
+
+        if ($response['response']['code'] === 401) {
+            throw new RuntimeException('Unable to authenticate with Sender.net using that API token, please try again.');
+        }
+
+        if (is_wp_error($response)) {
+            return false;
+        }
+
+        return true;
     }
 
 }

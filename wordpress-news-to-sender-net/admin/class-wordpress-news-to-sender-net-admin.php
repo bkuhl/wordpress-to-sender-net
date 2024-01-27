@@ -53,8 +53,6 @@ class Plugin_Name_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-
-		require_once plugin_dir_path(__DIR__).'includes/class-wordpress-news-to-sender-net-sender-api-lib.php';
 	}
 
     public function initializeAdmin() {
@@ -66,7 +64,7 @@ class Plugin_Name_Admin {
 					return Plugin_Name_Sender_Net_Lib::encryptApiToken($newValue);
 				}
 
-				return get_option('api_token');
+				return get_option(Plugin_Name::OPTION_API_TOKEN);
 			},
 			'show_in_rest' => false,
 		]);
@@ -93,7 +91,7 @@ class Plugin_Name_Admin {
         $existing_api_token = Plugin_Name_Sender_Net_Lib::apiToken();
 		$selected_groups = get_option(Plugin_Name::OPTION_SELECTED_GROUPS, []);
 		$autopublish = get_option(Plugin_Name::OPTION_AUTOPUBLISH, false);
-		$replyTo = get_option(Plugin_Name::OPTION_REPLY_TO, false);
+		$replyTo = get_option(Plugin_Name::OPTION_REPLY_TO);
 
         ?>
         <div class="wrap">
@@ -187,15 +185,37 @@ class Plugin_Name_Admin {
         <?php
     }
 
-    public function addSettingsMenuNavigation() {
-        add_options_page(
-            'News To Sender.net Settings',        // Page title
-            'News To Sender.net',        // Menu title
-            'manage_options',              // Capability
+	public function addSettingsMenuNavigation() {
+		add_options_page(
+			'News To Sender.net Settings',        // Page title
+			'News To Sender.net',        // Menu title
+			'manage_options',              // Capability
 			self::SETTINGS_GROUP,        // Menu slug
-            [$this, 'displayAdminSettings'] // Callback function to display the settings page
-        );
-    }
+			[$this, 'displayAdminSettings'] // Callback function to display the settings page
+		);
+	}
+
+	public function createCampaign($postId) {
+		if (wp_is_post_revision($postId)) {
+			return;
+		}
+
+		$post_type = get_post_type($postId);
+		if ($post_type !== 'post') {
+			return;
+		}
+
+		$post = get_post($postId);
+		$senderNetApi = new Plugin_Name_Sender_Net_Lib();
+		$campaignId = $senderNetApi->createCampaign(
+			$post->post_title,
+			$post->post_content
+		);
+
+		if (get_option(Plugin_Name::OPTION_AUTOPUBLISH)) {
+			$senderNetApi->sendCampaign($campaignId);
+		}
+	}
 
 	/**
 	 * Register the stylesheets for the admin area.
