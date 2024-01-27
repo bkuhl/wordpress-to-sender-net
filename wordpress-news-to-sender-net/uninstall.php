@@ -29,3 +29,7 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
+
+delete_option('api_token');
+delete_option('autopublish');
+delete_option('selected_groups');
