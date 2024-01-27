@@ -75,11 +75,6 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-wordpress-news-to-sender-n
  */
 function run_plugin_name() {
 
-    if (!empty(getenv('WP_CACHE')) && getenv('WP_CACHE') === 'false') {
-        define('WP_CACHE', false);
-    }
-    define('WP_CACHE', false);
-
 	$plugin = new Plugin_Name();
 	$plugin->run();
 
