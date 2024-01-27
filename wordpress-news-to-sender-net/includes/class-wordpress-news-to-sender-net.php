@@ -29,6 +29,11 @@
  */
 class Plugin_Name {
 
+    const OPTION_API_TOKEN = 'api_token';
+    const OPTION_AUTOPUBLISH = 'autopublish';
+    const OPTION_SELECTED_GROUPS = 'selected-groups';
+    const OPTION_REPLY_TO = 'reply-to';
+
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
 	 * the plugin.

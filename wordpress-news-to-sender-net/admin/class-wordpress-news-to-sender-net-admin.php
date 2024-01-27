@@ -58,7 +58,7 @@ class Plugin_Name_Admin {
 	}
 
     public function initializeAdmin() {
-		register_setting(self::SETTINGS_GROUP, 'api_token', [
+		register_setting(self::SETTINGS_GROUP, Plugin_Name::OPTION_API_TOKEN, [
 			'type' => 'string',
 			'sanitize_callback' => function ($newValue) {
 				$newValue = sanitize_text_field($newValue);
@@ -71,13 +71,17 @@ class Plugin_Name_Admin {
 			'show_in_rest' => false,
 		]);
 
-		register_setting(self::SETTINGS_GROUP, 'selected_groups', [
+		register_setting(self::SETTINGS_GROUP, Plugin_Name::OPTION_AUTOPUBLISH, [
+			'type' => 'boolean',
+			'default' => false,
+		]);
+
+		register_setting(self::SETTINGS_GROUP, Plugin_Name::OPTION_SELECTED_GROUPS, [
 			'type' => 'array',
 		]);
 
-		register_setting(self::SETTINGS_GROUP, 'autopublish', [
-			'type' => 'boolean',
-			'default' => false,
+		register_setting(self::SETTINGS_GROUP, Plugin_Name::OPTION_REPLY_TO, [
+			'type' => 'string',
 		]);
     }
 
@@ -87,8 +91,9 @@ class Plugin_Name_Admin {
         }
 
         $existing_api_token = Plugin_Name_Sender_Net_Lib::apiToken();
-		$selected_groups = get_option('selected_groups', []);
-		$autopublish = get_option('autopublish', false);
+		$selected_groups = get_option(Plugin_Name::OPTION_SELECTED_GROUPS, []);
+		$autopublish = get_option(Plugin_Name::OPTION_AUTOPUBLISH, false);
+		$replyTo = get_option(Plugin_Name::OPTION_REPLY_TO, false);
 
         ?>
         <div class="wrap">
@@ -105,9 +110,9 @@ class Plugin_Name_Admin {
                             <?php
                             if ($existing_api_token) {
                                 $masked_api_token = substr($existing_api_token, 0, 5) . str_repeat('*', strlen($existing_api_token) - 5);
-                                echo '<input type="text" id="api_token" name="api_token" value="' . esc_attr($masked_api_token) . '" class="regular-text" />';
+                                echo '<input type="text" id="api_token" name="'.Plugin_Name::OPTION_API_TOKEN.'" value="' . esc_attr($masked_api_token) . '" class="regular-text" />';
                             } else {
-                                echo '<input type="text" id="api_token" name="api_token" value="" class="regular-text" />';
+                                echo '<input type="text" id="api_token" name="'.Plugin_Name::OPTION_API_TOKEN.'" value="" class="regular-text" />';
                             }
                             ?>
                             <p class="description">
@@ -137,11 +142,22 @@ class Plugin_Name_Admin {
 							<th scope="row">Autopublish</th>
 							<td>
 								<label>
-									<input type="checkbox" name="autopublish" value="1" <?php checked(1, $autopublish); ?>>
+									<input type="checkbox" name="<?=Plugin_Name::OPTION_AUTOPUBLISH?>" value="1" <?php checked(1, $autopublish); ?>>
 									<strong>Enabled</strong>
 								</label>
 								<p class="description">
 									When checked, the Campaign that is created in Sender.net will also be automatically published (e.g. no chance to review/edit it manually).
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">Reply to address</th>
+							<td>
+								<label>
+									<input type="email" name="<?=Plugin_Name::OPTION_REPLY_TO?>" value="<?= esc_attr($replyTo) ?>">
+								</label>
+								<p class="description">
+									The from/reply-to address to use for the campaign.
 								</p>
 							</td>
 						</tr>
@@ -152,7 +168,7 @@ class Plugin_Name_Admin {
 								if (!empty($groups)) {
 									foreach ($groups as $group) {
 										$checked = in_array($group['id'], $selected_groups) ? 'checked' : ''; // Check if the group ID is in the selected groups
-										echo '<label><input type="checkbox" name="selected_groups[]" value="' . esc_attr($group['id']) . '" ' . $checked . '> <strong>' . esc_html($group['name']) . '</strong></label><br>';
+										echo '<label><input type="checkbox" name="'.Plugin_Name::OPTION_SELECTED_GROUPS.'[]" value="' . esc_attr($group['id']) . '" ' . $checked . '> <strong>' . esc_html($group['name']) . '</strong></label><br>';
 									}
 								} else {
 									echo '<p>No groups available.</p>';

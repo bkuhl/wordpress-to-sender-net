@@ -30,6 +30,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-delete_option('api_token');
-delete_option('autopublish');
-delete_option('selected_groups');
+delete_option(Plugin_Name::OPTION_API_TOKEN);
+delete_option(Plugin_Name::OPTION_AUTOPUBLISH);
+delete_option(Plugin_Name::OPTION_SELECTED_GROUPS);
+delete_option(Plugin_Name::OPTION_REPLY_TO);

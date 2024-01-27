@@ -4,7 +4,7 @@ class Plugin_Name_Sender_Net_Lib {
 
     public static function apiToken(): string
     {
-        return self::decryptApiToken(get_option('api_token'));
+        return self::decryptApiToken(get_option(Plugin_Name::OPTION_API_TOKEN));
     }
 
     public static function decryptApiToken(string $token): string
@@ -19,9 +19,7 @@ class Plugin_Name_Sender_Net_Lib {
 
     function getGroups(string $apiToken): array
     {
-        $url = 'https://api.sender.net/v2/groups';
-
-        $response = wp_remote_get($url, array(
+        $response = wp_remote_get('https://api.sender.net/v2/groups', array(
             'headers' => array(
                 'Authorization' => 'Bearer ' . $apiToken,
                 'Content-Type' => 'application/json',
@@ -31,6 +29,8 @@ class Plugin_Name_Sender_Net_Lib {
 
         if ($response['response']['code'] === 401) {
             throw new RuntimeException('Unable to authenticate with Sender.net using that API token, please try again.');
+        } elseif ($response['response']['code'] !== 200) {
+            throw new RuntimeException('Unknown error occurred, response code '.$response['response']['code'].' received');
         }
 
         if (is_wp_error($response)) {
