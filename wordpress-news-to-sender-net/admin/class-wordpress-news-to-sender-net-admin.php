@@ -6,8 +6,8 @@
  * @link       http://example.com
  * @since      1.0.0
  *
- * @package    Plugin_Name
- * @subpackage Plugin_Name/admin
+ * @package    WordpressToSender
+ * @subpackage WordpressToSender/admin
  */
 
 /**
@@ -16,11 +16,11 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the admin-specific stylesheet and JavaScript.
  *
- * @package    Plugin_Name
- * @subpackage Plugin_Name/admin
+ * @package    WordpressToSender
+ * @subpackage WordpressToSender/admin
  * @author     Your Name <email@example.com>
  */
-class Plugin_Name_Admin {
+class WordpressToSender_Admin {
 
 	const SETTINGS_GROUP = 'wordpress-news-to-sender-net_settings_group';
 
@@ -29,9 +29,9 @@ class Plugin_Name_Admin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
+	 * @var      string    $WordpressToSender    The ID of this plugin.
 	 */
-	private $plugin_name;
+	private $WordpressToSender;
 
 	/**
 	 * The version of this plugin.
@@ -46,39 +46,48 @@ class Plugin_Name_Admin {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of this plugin.
+	 * @param      string    $WordpressToSender       The name of this plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct( $WordpressToSender, $version ) {
 
-		$this->plugin_name = $plugin_name;
+		$this->WordpressToSender = $WordpressToSender;
 		$this->version = $version;
 	}
 
     public function initializeAdmin() {
-		register_setting(self::SETTINGS_GROUP, Plugin_Name::OPTION_API_TOKEN, [
+		register_setting(self::SETTINGS_GROUP, WordpressToSender::OPTION_API_TOKEN, [
 			'type' => 'string',
 			'sanitize_callback' => function ($newValue) {
 				$newValue = sanitize_text_field($newValue);
 				if (substr($newValue, -5) !== '*****') {
-					return Plugin_Name_Sender_Net_Lib::encryptApiToken($newValue);
+					return WordpressToSender_Sender_Net_Lib::encryptApiToken($newValue);
 				}
 
-				return get_option(Plugin_Name::OPTION_API_TOKEN);
+				return get_option(WordpressToSender::OPTION_API_TOKEN);
 			},
 			'show_in_rest' => false,
 		]);
 
-		register_setting(self::SETTINGS_GROUP, Plugin_Name::OPTION_AUTOPUBLISH, [
+		register_setting(self::SETTINGS_GROUP, WordpressToSender::OPTION_POST_TYPE, [
+			'type' => 'string',
+			'default' => 'post',
+		]);
+
+		register_setting(self::SETTINGS_GROUP, WordpressToSender::OPTION_AUTOPUBLISH, [
 			'type' => 'boolean',
 			'default' => false,
 		]);
 
-		register_setting(self::SETTINGS_GROUP, Plugin_Name::OPTION_SELECTED_GROUPS, [
+		register_setting(self::SETTINGS_GROUP, WordpressToSender::OPTION_SELECTED_GROUPS, [
 			'type' => 'array',
 		]);
 
-		register_setting(self::SETTINGS_GROUP, Plugin_Name::OPTION_REPLY_TO, [
+		register_setting(self::SETTINGS_GROUP, WordpressToSender::OPTION_REPLY_TO, [
+			'type' => 'string',
+		]);
+
+		register_setting(self::SETTINGS_GROUP, WordpressToSender::OPTION_MAIL_TEMPLATE, [
 			'type' => 'string',
 		]);
     }
@@ -88,12 +97,16 @@ class Plugin_Name_Admin {
             return;
         }
 
-        $existing_api_token = Plugin_Name_Sender_Net_Lib::apiToken();
-		$selected_groups = get_option(Plugin_Name::OPTION_SELECTED_GROUPS, []);
-		$autopublish = get_option(Plugin_Name::OPTION_AUTOPUBLISH, false);
-		$replyTo = get_option(Plugin_Name::OPTION_REPLY_TO);
+        $existing_api_token = WordpressToSender_Sender_Net_Lib::apiToken();
+		$selected_groups = get_option(WordpressToSender::OPTION_SELECTED_GROUPS, []);
+		$autopublish = get_option(WordpressToSender::OPTION_AUTOPUBLISH, false);
+		$replyTo = get_option(WordpressToSender::OPTION_REPLY_TO);
+		$template = get_option(WordpressToSender::OPTION_MAIL_TEMPLATE);
 
-        ?>
+		$post_types = get_post_types(['public' => true], 'objects');
+		$selected_post_type = get_option(WordpressToSender::OPTION_POST_TYPE);
+
+		?>
         <div class="wrap">
             <h2>News to Sender.net Settings</h2>
             <form method="post" action="options.php">
@@ -108,9 +121,9 @@ class Plugin_Name_Admin {
                             <?php
                             if ($existing_api_token) {
                                 $masked_api_token = substr($existing_api_token, 0, 5) . str_repeat('*', strlen($existing_api_token) - 5);
-                                echo '<input type="text" id="api_token" name="'.Plugin_Name::OPTION_API_TOKEN.'" value="' . esc_attr($masked_api_token) . '" class="regular-text" />';
+                                echo '<input type="text" id="api_token" name="'.WordpressToSender::OPTION_API_TOKEN.'" value="' . esc_attr($masked_api_token) . '" class="regular-text" />';
                             } else {
-                                echo '<input type="text" id="api_token" name="'.Plugin_Name::OPTION_API_TOKEN.'" value="" class="regular-text" />';
+                                echo '<input type="text" id="api_token" name="'.WordpressToSender::OPTION_API_TOKEN.'" value="" class="regular-text" />';
                             }
                             ?>
                             <p class="description">
@@ -124,7 +137,7 @@ class Plugin_Name_Admin {
 
 				if (!empty($existing_api_token)) {
 
-					$senderNetApi = new Plugin_Name_Sender_Net_Lib();
+					$senderNetApi = new WordpressToSender_Sender_Net_Lib();
 					try {
 						$groups = $senderNetApi->getGroups($existing_api_token);
 					} catch (RuntimeException $e) {
@@ -137,10 +150,23 @@ class Plugin_Name_Admin {
 
 					<table class="form-table">
 						<tr>
+							<th scope="row">Create Campaigns For</th>
+							<td>
+								<select name="<?php echo WordpressToSender::OPTION_POST_TYPE; ?>">
+									<?php foreach ($post_types as $post_type => $post_type_obj) : ?>
+										<option value="<?php echo esc_attr($post_type); ?>" <?php selected($selected_post_type, $post_type); ?>>
+											<?php echo esc_html($post_type_obj->label); ?>
+										</option>
+									<?php endforeach; ?>
+								</select>
+								<p class="description">When a new post of this type is created, we'll create an email campaign for it automatically.</p>
+							</td>
+						</tr>
+						<tr>
 							<th scope="row">Autopublish</th>
 							<td>
 								<label>
-									<input type="checkbox" name="<?=Plugin_Name::OPTION_AUTOPUBLISH?>" value="1" <?php checked(1, $autopublish); ?>>
+									<input type="checkbox" name="<?=WordpressToSender::OPTION_AUTOPUBLISH?>" value="1" <?php checked(1, $autopublish); ?>>
 									<strong>Enabled</strong>
 								</label>
 								<p class="description">
@@ -152,7 +178,7 @@ class Plugin_Name_Admin {
 							<th scope="row">Reply to address</th>
 							<td>
 								<label>
-									<input type="email" name="<?=Plugin_Name::OPTION_REPLY_TO?>" value="<?= esc_attr($replyTo) ?>">
+									<input type="email" name="<?=WordpressToSender::OPTION_REPLY_TO?>" value="<?= esc_attr($replyTo) ?>">
 								</label>
 								<p class="description">
 									The from/reply-to address to use for the campaign.
@@ -166,12 +192,21 @@ class Plugin_Name_Admin {
 								if (!empty($groups)) {
 									foreach ($groups as $group) {
 										$checked = in_array($group['id'], $selected_groups) ? 'checked' : ''; // Check if the group ID is in the selected groups
-										echo '<label><input type="checkbox" name="'.Plugin_Name::OPTION_SELECTED_GROUPS.'[]" value="' . esc_attr($group['id']) . '" ' . $checked . '> <strong>' . esc_html($group['name']) . '</strong></label><br>';
+										echo '<label><input type="checkbox" name="'.WordpressToSender::OPTION_SELECTED_GROUPS.'[]" value="' . esc_attr($group['id']) . '" ' . $checked . '> <strong>' . esc_html($group['name']) . '</strong></label><br>';
 									}
 								} else {
 									echo '<p>No groups available.</p>';
 								}
 								?>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">Email Template</th>
+							<td>
+								<textarea id="email-template" name="<?=WordpressToSender::OPTION_MAIL_TEMPLATE?>" rows="15" style="width: 100%;"><?php echo esc_textarea($template); ?></textarea>
+								<p class="description">
+									The HTML template must contain <strong>{{BODY_HERE}}</strong> which will be replaced with the contents of your Post.  <strong>{{TITLE_HERE}}</strong> will also be replaced with the title.  You'll also have to <a href="https://help.sender.net/knowledgebase/i-am-creating-a-html-campaign-but-i-cant-send-it-out-the-error-message-says-your-email-does-not-contain-an-unsubscribe-link/" target="_blank">include an unsubscribe link</a> in the footer.
+								</p>
 							</td>
 						</tr>
 					</table>
@@ -195,25 +230,30 @@ class Plugin_Name_Admin {
 		);
 	}
 
-	public function createCampaign($postId) {
-		if (wp_is_post_revision($postId)) {
-			return;
-		}
-
-		$post_type = get_post_type($postId);
-		if ($post_type !== 'post') {
-			return;
-		}
-
+	public function createCampaignOnPublish($postId)
+	{
 		$post = get_post($postId);
-		$senderNetApi = new Plugin_Name_Sender_Net_Lib();
-		$campaignId = $senderNetApi->createCampaign(
-			$post->post_title,
-			$post->post_content
-		);
 
-		if (get_option(Plugin_Name::OPTION_AUTOPUBLISH)) {
-			$senderNetApi->sendCampaign($campaignId);
+		if ($post->post_type === 'post' && $post->post_status === 'publish' && $post->post_date === $post->post_modified) {
+			$template = get_option(WordpressToSender::OPTION_MAIL_TEMPLATE);
+
+			$replacements = [
+				'{{TITLE_HERE}}' => $post->post_title,
+				'{{BODY_HERE}}' => $post->post_content,
+			];
+
+			$senderNetApi = new WordpressToSender_Sender_Net_Lib();
+			$campaignId = $senderNetApi->createCampaign(
+				$post->post_title,
+				str_replace(array_keys($replacements), array_values($replacements), $template)
+			);
+
+			var_dump(get_option(WordpressToSender::OPTION_AUTOPUBLISH));
+			if (get_option(WordpressToSender::OPTION_AUTOPUBLISH)) {
+				echo 'published';
+				$senderNetApi->sendCampaign($campaignId);
+			}
+			exit;
 		}
 	}
 
@@ -228,15 +268,15 @@ class Plugin_Name_Admin {
 		 * This function is provided for demonstration purposes only.
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in Plugin_Name_Loader as all of the hooks are defined
+		 * defined in WordpressToSender_Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The Plugin_Name_Loader will then create the relationship
+		 * The WordpressToSender_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/wordpress-news-to-sender-net-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->WordpressToSender, plugin_dir_url( __FILE__ ) . 'css/wordpress-news-to-sender-net-admin.css', array(), $this->version, 'all' );
 
 	}
 
@@ -251,15 +291,15 @@ class Plugin_Name_Admin {
 		 * This function is provided for demonstration purposes only.
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in Plugin_Name_Loader as all of the hooks are defined
+		 * defined in WordpressToSender_Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The Plugin_Name_Loader will then create the relationship
+		 * The WordpressToSender_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wordpress-news-to-sender-net-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->WordpressToSender, plugin_dir_url( __FILE__ ) . 'js/wordpress-news-to-sender-net-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
 

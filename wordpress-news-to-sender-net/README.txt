@@ -45,7 +45,7 @@ e.g.
 
 1. Upload `wordpress-news-to-sender-net.php` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Place `<?php do_action('plugin_name_hook'); ?>` in your templates
+1. Place `<?php do_action('WordpressToSender_hook'); ?>` in your templates
 
 == Frequently Asked Questions ==
 

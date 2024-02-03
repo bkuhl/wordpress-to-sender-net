@@ -22,7 +22,7 @@
  * @link       http://example.com
  * @since      1.0.0
  *
- * @package    Plugin_Name
+ * @package    WordpressToSender
  */
 
 // If uninstall not called from WordPress, then exit.
@@ -30,7 +30,9 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-delete_option(Plugin_Name::OPTION_API_TOKEN);
-delete_option(Plugin_Name::OPTION_AUTOPUBLISH);
-delete_option(Plugin_Name::OPTION_SELECTED_GROUPS);
-delete_option(Plugin_Name::OPTION_REPLY_TO);
+delete_option(WordpressToSender::OPTION_API_TOKEN);
+delete_option(WordpressToSender::OPTION_POST_TYPE);
+delete_option(WordpressToSender::OPTION_AUTOPUBLISH);
+delete_option(WordpressToSender::OPTION_SELECTED_GROUPS);
+delete_option(WordpressToSender::OPTION_REPLY_TO);
+delete_option(WordpressToSender::OPTION_MAIL_TEMPLATE);
