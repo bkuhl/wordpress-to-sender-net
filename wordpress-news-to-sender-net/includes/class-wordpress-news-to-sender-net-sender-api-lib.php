@@ -106,7 +106,7 @@ class WordpressToSender_Sender_Net_Lib {
         if ($response['response']['code'] === 401) {
             throw new RuntimeException('Unable to authenticate with Sender.net using that API token, please try again.');
         }
-        var_dump($response);
+
         if (is_wp_error($response)) {
             return false;
         }
