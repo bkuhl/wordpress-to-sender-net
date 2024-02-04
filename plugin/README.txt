@@ -1,4 +1,12 @@
-Wordpress News to Sender.net
+=== Wordpress News to Sender.net ===
+Contributors: webnet
+Donate link: http://example.com/
+Tags: email
+Requires at least: 6.0
+Tested up to: 6.4
+Stable tag: 1.0.0
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 A small plugin which will automatically create a Campaign in [Sender.net](https://www.sender.net) to a given group of subscribers.
 
