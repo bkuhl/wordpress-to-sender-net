@@ -2,7 +2,7 @@
 
 This is a custom wordpress plugin written to allow for News posts made to Wordpress to have campaigns automatically created for them within Sender.net.
 
-![](/plugin/assets/screenshot-1.png)
+![](plugin/assets/screenshot-1.png)
 
 ## Contributing
 
