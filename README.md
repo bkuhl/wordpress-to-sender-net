@@ -1,4 +1,4 @@
-# wordpress-news-to-sender-net
+# Wordpress News to Sender.net
 
 This is a custom wordpress plugin written to allow for News posts made to Wordpress to have campaigns automatically created for them within Sender.net.
 
