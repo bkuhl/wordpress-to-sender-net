@@ -1,6 +1,5 @@
 === Wordpress News to Sender.net ===
 Contributors: webnet
-Donate link: http://example.com/
 Tags: email
 Requires at least: 6.0
 Tested up to: 6.4
@@ -12,15 +11,13 @@ A small plugin which will automatically create a Campaign in [Sender.net](https:
 
 == Description ==
 
-This is the long description.  No limit, and you can use Markdown (as well as in the following sections).
-
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and
-Markdown parsed.
+This plugin taps into the publishing process for Posts and will create email campaigns on Sender.net for each post.  The plugin will take the title/body of the post and utilize Sender.net's API to create a campaign.  You can decide whether you want to auto publish or manually publish.
 
 A few notes about the sections above:
 
-*  Your API key is validated upon save
-*  You can customize the reply-to address and template used for the campaign
+* Your API key is validated upon save
+* You can customize the reply-to address and template used for the campaign
+* Use a customized template for all outbound email
 
 == Screenshots ==
 

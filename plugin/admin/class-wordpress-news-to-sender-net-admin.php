@@ -121,9 +121,9 @@ class WordpressToSender_Admin {
                             <?php
                             if ($existing_api_token) {
                                 $masked_api_token = substr($existing_api_token, 0, 5) . str_repeat('*', strlen($existing_api_token) - 5);
-                                echo '<input type="text" id="api_token" name="'.WordpressToSender::OPTION_API_TOKEN.'" value="' . esc_attr($masked_api_token) . '" class="regular-text" />';
+                                echo '<input type="text" id="api_token" name="'.esc_attr(WordpressToSender::OPTION_API_TOKEN).'" value="' . esc_attr($masked_api_token) . '" class="regular-text" />';
                             } else {
-                                echo '<input type="text" id="api_token" name="'.WordpressToSender::OPTION_API_TOKEN.'" value="" class="regular-text" />';
+                                echo '<input type="text" id="api_token" name="'.esc_attr(WordpressToSender::OPTION_API_TOKEN).'" value="" class="regular-text" />';
                             }
                             ?>
                             <p class="description">
@@ -152,7 +152,7 @@ class WordpressToSender_Admin {
 						<tr>
 							<th scope="row">Create Campaigns For</th>
 							<td>
-								<select name="<?php echo WordpressToSender::OPTION_POST_TYPE; ?>">
+								<select name="<?php echo esc_attr(WordpressToSender::OPTION_POST_TYPE); ?>">
 									<?php foreach ($post_types as $post_type => $post_type_obj) : ?>
 										<option value="<?php echo esc_attr($post_type); ?>" <?php selected($selected_post_type, $post_type); ?>>
 											<?php echo esc_html($post_type_obj->label); ?>
@@ -166,7 +166,7 @@ class WordpressToSender_Admin {
 							<th scope="row">Autopublish</th>
 							<td>
 								<label>
-									<input type="checkbox" name="<?=WordpressToSender::OPTION_AUTOPUBLISH?>" value="1" <?php checked(1, $autopublish); ?>>
+									<input type="checkbox" name="<?php echo esc_attr(WordpressToSender::OPTION_AUTOPUBLISH); ?>" value="1" <?php checked(1, $autopublish); ?>>
 									<strong>Enabled</strong>
 								</label>
 								<p class="description">
@@ -178,7 +178,7 @@ class WordpressToSender_Admin {
 							<th scope="row">Reply to address</th>
 							<td>
 								<label>
-									<input type="email" name="<?=WordpressToSender::OPTION_REPLY_TO?>" value="<?= esc_attr($replyTo) ?>">
+									<input type="email" name="<?php echo esc_attr(WordpressToSender::OPTION_REPLY_TO); ?>" value="<?php echo esc_attr($replyTo); ?>">
 								</label>
 								<p class="description">
 									The from/reply-to address to use for the campaign.
@@ -192,7 +192,7 @@ class WordpressToSender_Admin {
 								if (!empty($groups)) {
 									foreach ($groups as $group) {
 										$checked = in_array($group['id'], $selected_groups) ? 'checked' : ''; // Check if the group ID is in the selected groups
-										echo '<label><input type="checkbox" name="'.WordpressToSender::OPTION_SELECTED_GROUPS.'[]" value="' . esc_attr($group['id']) . '" ' . $checked . '> <strong>' . esc_html($group['name']) . '</strong></label><br>';
+										echo '<label><input type="checkbox" name="'.esc_attr(WordpressToSender::OPTION_SELECTED_GROUPS).'[]" value="' . esc_attr($group['id']) . '" ' . $checked . '> <strong>' . esc_html($group['name']) . '</strong></label><br>';
 									}
 								} else {
 									echo '<p>No groups available.</p>';
@@ -203,7 +203,7 @@ class WordpressToSender_Admin {
 						<tr>
 							<th scope="row">Email Template</th>
 							<td>
-								<textarea id="email-template" name="<?=WordpressToSender::OPTION_MAIL_TEMPLATE?>" rows="15" style="width: 100%;"><?php echo esc_textarea($template); ?></textarea>
+								<textarea id="email-template" name="<?php echo esc_attr(WordpressToSender::OPTION_MAIL_TEMPLATE); ?>" rows="15" style="width: 100%;"><?php echo esc_textarea($template); ?></textarea>
 								<p class="description">
 									The HTML template must contain <strong>{{BODY_HERE}}</strong> which will be replaced with the contents of your Post.  <strong>{{TITLE_HERE}}</strong> will also be replaced with the title.  You'll also have to <a href="https://help.sender.net/knowledgebase/i-am-creating-a-html-campaign-but-i-cant-send-it-out-the-error-message-says-your-email-does-not-contain-an-unsubscribe-link/" target="_blank">include an unsubscribe link</a> in the footer.
 								</p>
@@ -248,9 +248,7 @@ class WordpressToSender_Admin {
 				str_replace(array_keys($replacements), array_values($replacements), $template)
 			);
 
-			var_dump(get_option(WordpressToSender::OPTION_AUTOPUBLISH));
 			if (get_option(WordpressToSender::OPTION_AUTOPUBLISH)) {
-				echo 'published';
 				$senderNetApi->sendCampaign($campaignId);
 			}
 			exit;
