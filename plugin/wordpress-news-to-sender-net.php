@@ -41,7 +41,7 @@ define( 'WordpressToSender_VERSION', '1.0.0' );
  * The code that runs during plugin activation.
  * This action is documented in includes/class-wordpress-news-to-sender-net-activator.php
  */
-function wts_activate_WordpressToSender() {
+function wtosender_activate_WordpressToSender() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-wordpress-news-to-sender-net-activator.php';
 	WordpressToSender_Activator::activate();
 }
@@ -50,13 +50,13 @@ function wts_activate_WordpressToSender() {
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-wordpress-news-to-sender-net-deactivator.php
  */
-function wts_deactivate_WordpressToSender() {
+function wtosender_deactivate_WordpressToSender() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-wordpress-news-to-sender-net-deactivator.php';
 	WordpressToSender_Deactivator::deactivate();
 }
 
-register_activation_hook( __FILE__, 'wts_activate_WordpressToSender' );
-register_deactivation_hook( __FILE__, 'wts_deactivate_WordpressToSender' );
+register_activation_hook( __FILE__, 'wtosender_activate_WordpressToSender' );
+register_deactivation_hook( __FILE__, 'wtosender_deactivate_WordpressToSender' );
 
 /**
  * The core plugin class that is used to define internationalization,
@@ -73,11 +73,11 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-wordpress-news-to-sender-n
  *
  * @since    1.0.0
  */
-function wts_run_WordpressToSender() {
+function wtosender_run_WordpressToSender() {
 
 	$plugin = new WordpressToSender();
 	$plugin->run();
 
 
 }
-wts_run_WordpressToSender();
+wtosender_run_WordpressToSender();

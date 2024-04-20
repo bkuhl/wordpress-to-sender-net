@@ -192,7 +192,7 @@ class WordpressToSender_Admin {
 								if (!empty($groups)) {
 									foreach ($groups as $group) {
 										$checked = in_array($group['id'], $selected_groups) ? 'checked' : ''; // Check if the group ID is in the selected groups
-										echo '<label><input type="checkbox" name="'.esc_attr(WordpressToSender::OPTION_SELECTED_GROUPS).'[]" value="' . esc_attr($group['id']) . '" ' . $checked . '> <strong>' . esc_html($group['name']) . '</strong></label><br>';
+										echo '<label><input type="checkbox" name="'.esc_attr(WordpressToSender::OPTION_SELECTED_GROUPS).'[]" value="' . esc_attr($group['id']) . '" ' . esc_attr($checked) . '> <strong>' . esc_html($group['name']) . '</strong></label><br>';
 									}
 								} else {
 									echo '<p>No groups available.</p>';
