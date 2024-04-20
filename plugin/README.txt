@@ -1,4 +1,4 @@
-=== Wordpress News to Sender.net ===
+=== News to Sender.net ===
 Contributors: webnet
 Tags: email
 Requires at least: 6.0

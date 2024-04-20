@@ -63,7 +63,7 @@ class WordpressToSender_Sender_Net_Lib {
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ],
-            'body' => json_encode([
+            'body' => wp_json_encode([
                 'title' => $subject,
                 'subject' => $subject,
                 'from' => get_option(WordpressToSender::OPTION_REPLY_TO),
