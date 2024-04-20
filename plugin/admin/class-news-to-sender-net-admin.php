@@ -274,7 +274,7 @@ class WordpressToSender_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->WordpressToSender, plugin_dir_url( __FILE__ ) . 'css/wordpress-news-to-sender-net-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->WordpressToSender, plugin_dir_url(__FILE__) . 'css/news-to-sender-net-admin.css', array(), $this->version, 'all' );
 
 	}
 
@@ -297,7 +297,7 @@ class WordpressToSender_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->WordpressToSender, plugin_dir_url( __FILE__ ) . 'js/wordpress-news-to-sender-net-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->WordpressToSender, plugin_dir_url( __FILE__ ) . 'js/news-to-sender-net-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
 
