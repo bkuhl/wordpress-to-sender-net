@@ -30,7 +30,7 @@ class WordpressToSender_Sender_Net_Lib {
         if ($response['response']['code'] === 401) {
             throw new RuntimeException('Unable to authenticate with Sender.net using that API token, please try again.');
         } elseif ($response['response']['code'] !== 200) {
-            throw new RuntimeException('Unknown error occurred, response code '.$response['response']['code'].' received');
+            throw new RuntimeException('Unknown error occurred, response code '.esc_html($response['response']['code']).' received');
         }
 
         if (is_wp_error($response)) {
@@ -79,7 +79,7 @@ class WordpressToSender_Sender_Net_Lib {
         }
 
         if ($response['response']['code'] === 422) {
-            throw new RuntimeException('Failed to create: '.$response['response']['message']);
+            throw new RuntimeException('Failed to create: '.esc_html($response['response']['message']));
         }
 
         if (is_wp_error($response)) {
