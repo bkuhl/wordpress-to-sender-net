@@ -21,7 +21,7 @@
  * Author URI:        https://github.com/bkuhl
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       20_01-57-40_wordpress-news-to-sender-net
+ * Text Domain:       20_01-57-40_news-to-sender-net
  * Domain Path:       /languages
  */
 

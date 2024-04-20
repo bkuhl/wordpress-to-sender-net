@@ -1,5 +1,5 @@
 === News to Sender.net ===
-Contributors: webnet
+Contributors: BKuhl
 Tags: email
 Requires at least: 6.0
 Tested up to: 6.4
