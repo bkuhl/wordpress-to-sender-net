@@ -16,8 +16,8 @@
  * Plugin Name:       News to Sender.net Mailer
  * Plugin URI:        https://github.com/bible-bowl/wordpress-to-sender-net
  * Description:       Automatically creates and sends campaigns on Sender.net when News is posted
- * Version:           1.0.0
- * Author:            BKuhl
+ * Version:           0.0.3
+ * Author:            Ben Kuhl
  * Author URI:        https://github.com/bkuhl
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
