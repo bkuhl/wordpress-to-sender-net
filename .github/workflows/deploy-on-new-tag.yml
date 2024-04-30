@@ -1,8 +1,8 @@
 name: Deploy to WordPress.org
+
 on:
-  push:
-#    tags:
-#      - "*"
+  release:
+    types: [released]
 
 jobs:
   deploy:
@@ -13,20 +13,21 @@ jobs:
 
       - name: WordPress Plugin Deploy
         id: deploy
-        uses: 10up/action-wordpress-plugin-deploy@stable
+        uses: 10up/action-wordpress-plugin-deploy@2
         with:
           generate-zip: true
-          dry-run: true
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG: posts-to-sender-net
           BUILD_DIR: plugin/
-          VERSION: 0.0.1-beta
 
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ${{github.workspace}}/${{ github.event.repository.name }}.zip
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ steps.deploy.outputs.zip-path }}
+          asset_name: ${{ github.event.repository.name }}.zip
+          asset_content_type: application/zip
